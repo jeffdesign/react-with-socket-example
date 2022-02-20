@@ -19,27 +19,28 @@ const initialValue = 0;
 let count = initialValue;
 
 io.on(MSG.CONNECTION, (socket: Socket) => {
-  emitCount(count)
+  emitCount(socket, count);
 
   socket.on(EVENT.INCREMENT, () => {
-    count++
-    emitCount(count)
+    count++;
+    emitCount(socket, count);
   });
 
   socket.on(EVENT.DECREMENT, () => {
     count--;
-    emitCount(count)
+    emitCount(socket, count);
   });
 
   socket.on(EVENT.RESET, () => {
     count = initialValue;
-    emitCount(count)
+    emitCount(socket, count);
   });
 });
 
-function emitCount(count: number) {
+function emitCount({ id }: Socket, count: number) {
   io.emit(MSG.COUNTER_UPDATED, count);
+  console.log({ clientId: id, count });
 }
 
-console.log("Server now running on: ", 3001);
+console.log("Server now running on port", 3001);
 httpServer.listen(3001);
